@@ -4,6 +4,6 @@ return (object)[
     'destDirectory' => 'docs',
     'format' => 'github',
     'classes' => [
-        '\\vakata\\views\\Storage'
+        '\\vakata\\views\\View'
     ],
 ];

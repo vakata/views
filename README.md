@@ -19,6 +19,57 @@ $ composer require vakata/views
 ## Usage
 
 ``` php
+use vakata\views\View;
+
+// register template dirs
+View::addDir('/path/to/templatedir');
+View::addDir('/path/to/otherdir', 'other');
+
+// a variable available in all templates
+View::shareData("siteTitle", "test");
+
+// variables available in all templates
+View::shareData(["a" => 1, "b" => 2]);
+
+// render a template from the first dir:
+View::get('profile', ['user' => 'Test']);
+
+// render a template from a named dir:
+View::get('other::user', ['user' => 'Test']);
+
+// the above is the same as
+$v = new View('other::user');
+$v->render(['user'=>'Test']);
+```
+
+A sample template may look like this:
+```php
+<?php $this->layout('master.layout', ['masterParam' => 'master-value']); ?>
+
+Content
+
+<?php $this->sectionStart("sidebar"); ?>
+Here is some unfiltered content: <?= $b ?> 
+Here is some filtered content: <?= $this->e($user) ?> 
+<?php $this->sectionStop(); ?>
+
+Here is some filtered and transformed content:
+<?= $this->e($user, 'trim|strtouuper') ?> 
+
+Include a child template:
+<?= $this->include('nameddir::include', ['optional' => 'params']); ?>
+```
+
+As for the master template (which can in turn have its own master template):
+```php
+I am master!
+
+<?= $this->section("sidebar") ?>
+
+<?= $masterParam ?> <?= $a ?>
+
+The unnamed part of the above template:
+<?= $this->section() ?>
 
 ```
 

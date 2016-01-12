@@ -13,7 +13,7 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 		mkdir(self::$dir2);
 		file_put_contents(
 			self::$dir1 . DIRECTORY_SEPARATOR . 'layout.php',
-			'd1l <?=$this->section("s1")?><?=$this->section()?> <?=$a?><?php $this->layout("dir2::layout"); ?>'
+			'd1l <?=$this->section("s1")?><?=$this->section()?> <?=$a?><?php $this->layout("layout"); ?>'
 		);
 		file_put_contents(
 			self::$dir2 . DIRECTORY_SEPARATOR . 'layout.php',
@@ -25,7 +25,11 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 		);
 		file_put_contents(
 			self::$dir1 . DIRECTORY_SEPARATOR . 'test.php',
-			'<?php $this->layout("dir1::layout", ["a"=>2]); ?> d1t <?=$this->e(" <a> ", "strtoupper|trim")?> <?=$this->insert("dir2::inside");?><?php $this->sectionStart("s1"); ?>s1<?php $this->sectionStop(); ?><?php $this->sectionStart("s2"); ?>s2<?php $this->sectionStop(); ?>'
+			'<?php $this->layout("dir1::layout", ["a"=>2]); ?> d1t <?=$this->e(" <a> ", "strtoupper|trim")?> <?=$this->insert("inside");?><?php $this->sectionStart("s1"); ?>s1<?php $this->sectionStop(); ?><?php $this->sectionStart("s2"); ?>s2<?php $this->sectionStop(); ?>'
+		);
+		file_put_contents(
+			self::$dir1 . DIRECTORY_SEPARATOR . 'ex.php',
+			'<?php throw new \Exception(); ?>'
 		);
 	}
 	public static function tearDownAfterClass() {
@@ -55,11 +59,24 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 
 	public function testCreate() {
 		\vakata\views\View::addDir(self::$dir1, 'dir1');
-		\vakata\views\View::addDir(self::$dir2, 'dir2');
+		\vakata\views\View::addDir(self::$dir2);
 		\vakata\views\View::shareData('a', '0');
 		\vakata\views\View::shareData([ 'a' => '1' ]);
 		$v = new \vakata\views\View('dir1::test', ['c' => 3]);
 		$this->assertEquals('d2l d1l s1 d1t &LT;A&GT; inside 2 1', $v->render());
 		$this->assertEquals('d2l d1l s1 d1t &LT;A&GT; inside 2 1', \vakata\views\View::get('dir1::test'));
+	}
+	public function testInvalidDir() {
+		$this->setExpectedException('\\Exception');
+		$v = new \vakata\views\View('dir2::test');
+	}
+	public function testInvalidFile() {
+		$this->setExpectedException('\\Exception');
+		$v = new \vakata\views\View('dir1::test1');
+	}
+	public function testBadFile() {
+		$this->setExpectedException('\\Exception');
+		$v = new \vakata\views\View('dir1::ex');
+		$v->render();
 	}
 }

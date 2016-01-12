@@ -169,5 +169,4 @@ class View
             throw $e;
         }
     }
-
 }

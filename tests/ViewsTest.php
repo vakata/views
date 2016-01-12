@@ -25,7 +25,7 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 		);
 		file_put_contents(
 			self::$dir1 . DIRECTORY_SEPARATOR . 'test.php',
-			'<?php $this->layout("dir1::layout", ["a"=>2]); ?> d1t <?=$this->e(" <a> ", "strtoupper|trim")?> <?=$this->include("dir2::inside");?><?php $this->sectionStart("s1"); ?>s1<?php $this->sectionStop(); ?><?php $this->sectionStart("s2"); ?>s2<?php $this->sectionStop(); ?>'
+			'<?php $this->layout("dir1::layout", ["a"=>2]); ?> d1t <?=$this->e(" <a> ", "strtoupper|trim")?> <?=$this->insert("dir2::inside");?><?php $this->sectionStart("s1"); ?>s1<?php $this->sectionStop(); ?><?php $this->sectionStart("s2"); ?>s2<?php $this->sectionStop(); ?>'
 		);
 	}
 	public static function tearDownAfterClass() {

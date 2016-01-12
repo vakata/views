@@ -136,12 +136,12 @@ class View
     }
     /**
      * Include a template inside the current one. Can only be used from inside a template.
-     * @method include
-     * @param  string  $template the template to include
+     * @method insert
+     * @param  string  $template the template to insert
      * @param  array   $data     optional data to pass in
      * @return string            the result
      */
-    protected function include($template, array $data = [])
+    protected function insert($template, array $data = [])
     {
         return (new self($template))->render($data);
     }

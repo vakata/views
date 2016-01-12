@@ -57,7 +57,7 @@ Here is some filtered and transformed content:
 <?= $this->e($user, 'trim|strtouuper') ?> 
 
 Include a child template:
-<?= $this->include('nameddir::include', ['optional' => 'params']); ?>
+<?= $this->insert('nameddir::include', ['optional' => 'params']); ?>
 ```
 
 As for the master template (which can in turn have its own master template):

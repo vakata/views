@@ -126,13 +126,15 @@ class View
      */
     protected function e($var, $funcs = '')
     {
-        $var = htmlspecialchars($var, ENT_HTML5 | ENT_QUOTES);
-        $funcs = array_filter(explode('|', $funcs));
-        foreach ($funcs as $f) {
-            $var = call_user_func($f, $var);
+        if (is_callable($func)) {
+            $var = call_user_func($func, $var);
+        } else {
+            $funcs = array_filter(explode('|', $funcs));
+            foreach ($funcs as $f) {
+                $var = call_user_func($f, $var);
+            }
         }
-
-        return $var;
+        return htmlspecialchars($var, ENT_HTML5 | ENT_QUOTES);
     }
     /**
      * Include a template inside the current one. Can only be used from inside a template.

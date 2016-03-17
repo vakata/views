@@ -63,8 +63,8 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 		\vakata\views\View::shareData('a', '0');
 		\vakata\views\View::shareData([ 'a' => '1' ]);
 		$v = new \vakata\views\View('dir1::test', ['c' => 3]);
-		$this->assertEquals('d2l d1l s1 d1t &LT;A&GT; inside 2 1', $v->render());
-		$this->assertEquals('d2l d1l s1 d1t &LT;A&GT; inside 2 1', \vakata\views\View::get('dir1::test'));
+		$this->assertEquals('d2l d1l s1 d1t &lt;A&gt; inside 2 1', $v->render());
+		$this->assertEquals('d2l d1l s1 d1t &lt;A&gt; inside 2 1', \vakata\views\View::get('dir1::test'));
 	}
 	public function testInvalidDir() {
 		$this->setExpectedException('\\Exception');

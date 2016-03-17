@@ -121,13 +121,13 @@ class View
      * Escape a variable (htmlspecialchars is used). Optionally functions can be applied to the resulting value.
      * @method e
      * @param  string $var   the var to escape
-     * @param  string $funcs a pipe delimited list of functions to execute on the value
+     * @param  callable|string $funcs a pipe delimited list of functions to execute on the value (or a single callable)
      * @return string        the escaped string
      */
     protected function e($var, $funcs = '')
     {
-        if (is_callable($func)) {
-            $var = call_user_func($func, $var);
+        if (is_callable($funcs)) {
+            $var = call_user_func($funcs, $var);
         } else {
             $funcs = array_filter(explode('|', $funcs));
             foreach ($funcs as $f) {

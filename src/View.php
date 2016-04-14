@@ -108,6 +108,10 @@ class View
      */
     protected function layout($template, array $data = [])
     {
+        $temp = explode('::', $template, 2);
+        if (isset($temp[1]) && $temp[0] === '.') {
+            $template = $this->dir() . '::' . $temp[1];
+        }
         $this->layout = $template;
         $this->layoutData = $data;
     }
@@ -167,6 +171,10 @@ class View
      */
     protected function insert($template, array $data = [])
     {
+        $temp = explode('::', $template, 2);
+        if (isset($temp[1]) && $temp[0] === '.') {
+            $template = $this->dir() . '::' . $temp[1];
+        }
         return (new self($template))->render($data);
     }
     /**

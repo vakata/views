@@ -13,6 +13,8 @@ class View
     protected $template = null;
     protected $sectionData = null;
 
+    protected $dir = null;
+    protected $name = null;
     protected $layout = null;
     protected $layoutData = [];
     protected $layoutSection = null;
@@ -67,6 +69,7 @@ class View
         if (!isset($template[1])) {
             array_unshift($template, '');
         }
+        list($this->dir, $this->name) = $template;
         if (!isset(static::$dirs[$template[0]])) {
             throw new \Exception('Unknown directory: '.$template[0]);
         }
@@ -76,6 +79,25 @@ class View
         }
         $this->template = $template;
         $this->sectionData = $sectionData;
+    }
+
+    /**
+     * Get the current template directory handle
+     * @method dir
+     * @return string directory_handle
+     */
+    protected function dir()
+    {
+        return $this->dir;
+    }
+    /**
+     * Get the current template short name
+     * @method name
+     * @return string name
+     */
+    protected function name()
+    {
+        return $this->name;
     }
 
     /**

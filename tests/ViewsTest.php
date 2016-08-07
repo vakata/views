@@ -5,6 +5,7 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 {
 	private static $dir1;
 	private static $dir2;
+	private static $views;
 
 	public static function setUpBeforeClass() {
 		self::$dir1 = __DIR__ . DIRECTORY_SEPARATOR . 'views1';
@@ -58,25 +59,26 @@ class ViewsTest extends \PHPUnit_Framework_TestCase
 	}
 
 	public function testCreate() {
-		\vakata\views\View::addDir(self::$dir1, 'dir1');
-		\vakata\views\View::addDir(self::$dir2);
-		\vakata\views\View::shareData('a', '0');
-		\vakata\views\View::shareData([ 'a' => '1' ]);
-		$v = new \vakata\views\View('dir1::test', ['c' => 3]);
+		static::$views = new \vakata\views\Views();
+		static::$views->dir(self::$dir1, 'dir1');
+		static::$views->dir(self::$dir2);
+		static::$views->share('a', '0');
+		static::$views->share([ 'a' => '1' ]);
+		$v = static::$views->get('dir1::test', ['c' => 3]);
 		$this->assertEquals('d2l d1l s1 d1t &lt;A&gt; inside 2 1', $v->render());
-		$this->assertEquals('d2l d1l s1 d1t &lt;A&gt; inside 2 1', \vakata\views\View::get('dir1::test'));
+		$this->assertEquals('d2l d1l s1 d1t &lt;A&gt; inside 2 1', static::$views->render('dir1::test'));
 	}
 	public function testInvalidDir() {
 		$this->setExpectedException('\\Exception');
-		$v = new \vakata\views\View('dir2::test');
+		$v = static::$views->get('dir2::test');
 	}
 	public function testInvalidFile() {
 		$this->setExpectedException('\\Exception');
-		$v = new \vakata\views\View('dir1::test1');
+		$v = static::$views->get('dir1::test1');
 	}
 	public function testBadFile() {
 		$this->setExpectedException('\\Exception');
-		$v = new \vakata\views\View('dir1::ex');
+		$v = static::$views->get('dir1::ex');
 		$v->render();
 	}
 }

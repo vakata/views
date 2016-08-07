@@ -7,97 +7,27 @@ namespace vakata\views;
  */
 class View
 {
-    protected static $dirs = [];
-    protected static $data = [];
+    protected $repository;
+    protected $template;
+    protected $sectionData;
 
-    protected $template = null;
-    protected $sectionData = null;
-
-    protected $dir = null;
-    protected $name = null;
-    protected $layout = null;
+    protected $layout;
+    protected $layoutSection;
     protected $layoutData = [];
-    protected $layoutSection = null;
     protected $layoutSections = [];
-
-    /**
-     * Add a directory to the template list. The name is used when searching for the template.
-     * @method addDir
-     * @param string $dir  the directory to add
-     * @param string $name the alias of the directory
-     * @return self
-     */
-    public static function addDir($dir, $name = '')
-    {
-        static::$dirs[$name] = $dir;
-    }
-    /**
-     * Share a single variable or an array of variables in all templates.
-     * @method shareData
-     * @param string|array $var   the variable name, or an array of variables
-     * @param mixed        $value if $var is an array omit this parameter, otherwise this is the value of the variable
-     */
-    public static function shareData($var, $value = null)
-    {
-        if (is_array($var) && $value === null) {
-            static::$data = array_merge(static::$data, $var);
-        } else {
-            static::$data[$var] = $value;
-        }
-    }
-    /**
-     * Render a template.
-     * @method get
-     * @param  string $template the template to render
-     * @param  array  $data     optional data to use in rendering
-     * @return string           the result
-     */
-    public static function get($template, array $data = [])
-    {
-        return (new self($template))->render($data);
-    }
 
     /**
      * Create an instance.
      * @method __construct
-     * @param  string      $template    the template to be rendered
+     * @param  \vakata\views\Views      $repository    a views repository instance
+     * @param  string      $template    the template file to be rendered
      * @param  array       $sectionData optional available sections
      */
-    public function __construct($template, $sectionData = [])
+    public function __construct(Views $repository, $template, $sectionData = [])
     {
-        $template = explode('::', $template, 2);
-        if (!isset($template[1])) {
-            array_unshift($template, '');
-        }
-        list($this->dir, $this->name) = $template;
-        if (!isset(static::$dirs[$template[0]])) {
-            throw new \Exception('Unknown directory: '.$template[0]);
-        }
-        $template = static::$dirs[$template[0]].DIRECTORY_SEPARATOR.preg_replace('(\.php$)', '', $template[1]).'.php';
-        if (!is_file($template)) {
-            throw new \Exception('Template not found: '.$template);
-        }
+        $this->repository = $repository;
         $this->template = $template;
         $this->sectionData = $sectionData;
-    }
-
-    /**
-     * Get the current template directory handle
-     * @method dir
-     * @return string directory_handle
-     */
-    protected function dir()
-    {
-        return $this->dir;
-    }
-    /**
-     * Get the current template short name
-     * @method name
-     * @return string name
-     */
-    protected function name()
-    {
-        return $this->name;
     }
 
     /**
@@ -108,10 +38,6 @@ class View
      */
     protected function layout($template, array $data = [])
     {
-        $temp = explode('::', $template, 2);
-        if (isset($temp[1]) && $temp[0] === '.') {
-            $template = $this->dir() . '::' . $temp[1];
-        }
         $this->layout = $template;
         $this->layoutData = $data;
     }
@@ -171,11 +97,7 @@ class View
      */
     protected function insert($template, array $data = [])
     {
-        $temp = explode('::', $template, 2);
-        if (isset($temp[1]) && $temp[0] === '.') {
-            $template = $this->dir() . '::' . $temp[1];
-        }
-        return (new self($template))->render($data);
+        return $this->repository->render($template, $data);
     }
     /**
      * Render the template.
@@ -185,7 +107,6 @@ class View
      */
     public function render(array $data = [])
     {
-        extract(static::$data);
         extract($data);
         try {
             ob_start();
@@ -193,12 +114,16 @@ class View
             $data = ob_get_clean();
             if ($this->layout) {
                 $this->layoutSections[''] = $data;
-                return (new self($this->layout, $this->layoutSections))->render($this->layoutData);
+                return $this->repository->render($this->layout, $this->layoutData, $this->layoutSections);
             }
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             ob_end_clean();
             throw $e;
         }
+    }
+    public function __invoke(array $data = [])
+    {
+        return $this->render($data);
     }
 }

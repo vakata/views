@@ -19,26 +19,28 @@ $ composer require vakata/views
 ## Usage
 
 ``` php
-use vakata\views\View;
+use vakata\views\Views;
+
+$views = new vakata\views\Views();
 
 // register template dirs
-View::addDir('/path/to/templatedir');
-View::addDir('/path/to/otherdir', 'other');
+$views->dir('/path/to/templatedir');
+$views->dir('/path/to/otherdir', 'other');
 
 // a variable available in all templates
-View::shareData("siteTitle", "test");
+$views->share("siteTitle", "test");
 
 // variables available in all templates
-View::shareData(["a" => 1, "b" => 2]);
+$views->share(["a" => 1, "b" => 2]);
 
 // render a template from the first dir:
-View::get('profile', ['user' => 'Test']);
+$views->render('profile', ['user' => 'Test']);
 
 // render a template from a named dir:
-View::get('other::user', ['user' => 'Test']);
+$views->render('other::user', ['user' => 'Test']);
 
 // the above is the same as
-$v = new View('other::user');
+$v = $views->get('other::user');
 $v->render(['user'=>'Test']);
 ```
 

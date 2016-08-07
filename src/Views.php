@@ -11,6 +11,18 @@ class Views
     protected $data = [];
 
     /**
+     * Create an instance
+     * @method __construct
+     * @param  string|null $dir  optional default dir for views
+     * @param  array       $data optional preshared data
+     */
+    public function __construct(string $dir = null, array $data = [])
+    {
+        $this->dir($dir);
+        $this->share($data);
+    }
+
+    /**
      * Add a directory to the template list. The name is used when searching for the template.
      * @method dir
      * @param string $dir  the directory to add
@@ -59,7 +71,7 @@ class Views
         if (!is_file($template)) {
             throw new \Exception('Template not found: ' . $template);
         }
-        return new View($this, $template, $sections);
+        return new View($this, $template, $sections, $this->data);
     }
     /**
      * Render a template.
@@ -71,6 +83,6 @@ class Views
      */
     public function render($template, array $data = [], array $sections = [])
     {
-        return $this->get($template, $sections)->render(array_merge($this->data, $data));
+        return $this->get($template, $sections, $this->data)->render($data);
     }
 }

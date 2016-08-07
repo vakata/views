@@ -10,6 +10,7 @@ class View
     protected $repository;
     protected $template;
     protected $sectionData;
+    protected $data = [];
 
     protected $layout;
     protected $layoutSection;
@@ -22,12 +23,14 @@ class View
      * @param  \vakata\views\Views      $repository    a views repository instance
      * @param  string      $template    the template file to be rendered
      * @param  array       $sectionData optional available sections
+     * @param  array       $data        optional data to use when rendering
      */
-    public function __construct(Views $repository, $template, $sectionData = [])
+    public function __construct(Views $repository, string $template, array $sectionData = [], array $data = [])
     {
         $this->repository = $repository;
         $this->template = $template;
         $this->sectionData = $sectionData;
+        $this->data = $data;
     }
 
     /**
@@ -107,6 +110,7 @@ class View
      */
     public function render(array $data = [])
     {
+        extract($this->data);
         extract($data);
         try {
             ob_start();

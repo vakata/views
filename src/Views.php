@@ -12,7 +12,6 @@ class Views
 
     /**
      * Create an instance
-     * @method __construct
      * @param  string|null $dir  optional default dir for views
      * @param  array       $data optional preshared data
      */
@@ -24,7 +23,6 @@ class Views
 
     /**
      * Add a directory to the template list. The name is used when searching for the template.
-     * @method dir
      * @param string $dir  the directory to add
      * @param string $name the alias of the directory
      * @return self
@@ -36,7 +34,6 @@ class Views
     }
     /**
      * Share a single variable or an array of variables in all templates.
-     * @method share
      * @param string|array $var   the variable name, or an array of variables
      * @param mixed        $value if $var is an array omit this parameter, otherwise this is the value of the variable
      * @return self
@@ -52,7 +49,6 @@ class Views
     }
     /**
      * Get a View instance.
-     * @method get
      * @param  string $template the template to render
      * @param  array  $sections optional sections to use in rendering
      * @return \vakata\views\View the view instance
@@ -75,7 +71,6 @@ class Views
     }
     /**
      * Render a template.
-     * @method render
      * @param  string $template the template to render
      * @param  array  $data     optional data to use in rendering
      * @param  array  $sections optional sections to use in rendering

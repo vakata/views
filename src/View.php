@@ -19,7 +19,6 @@ class View
 
     /**
      * Create an instance.
-     * @method __construct
      * @param  \vakata\views\Views      $repository    a views repository instance
      * @param  string      $template    the template file to be rendered
      * @param  array       $sectionData optional available sections
@@ -35,7 +34,6 @@ class View
 
     /**
      * Specifies a master template to load the current template in. Available only inside templates.
-     * @method layout
      * @param  string $template the master template
      * @param  array  $data     optional data to pass to the template
      */
@@ -46,7 +44,6 @@ class View
     }
     /**
      * Get a secion's string content if available. Should be used only inside templates.
-     * @method section
      * @param  string  $name the section name
      * @return string        the section content
      */
@@ -56,7 +53,6 @@ class View
     }
     /**
      * Start a new section, so that it will be available in the master template. Should be used only inside templates.
-     * @method sectionStart
      * @param  string       $name the section name
      */
     protected function sectionStart($name)
@@ -66,7 +62,6 @@ class View
     }
     /**
      * Stop and gather the content for the currently started section. Should be used only inside templates.
-     * @method sectionStop
      */
     protected function sectionStop()
     {
@@ -74,7 +69,6 @@ class View
     }
     /**
      * Escape a variable (htmlspecialchars is used). Optionally functions can be applied to the resulting value.
-     * @method e
      * @param  string $var   the var to escape
      * @param  callable|string $funcs a pipe delimited list of functions to execute on the value (or a single callable)
      * @return string        the escaped string
@@ -93,7 +87,6 @@ class View
     }
     /**
      * Include a template inside the current one. Can only be used from inside a template.
-     * @method insert
      * @param  string  $template the template to insert
      * @param  array   $data     optional data to pass in
      * @return string            the result
@@ -104,7 +97,6 @@ class View
     }
     /**
      * Render the template.
-     * @method render
      * @param  array  $data optional data to use when rendering
      * @return string       the result
      */

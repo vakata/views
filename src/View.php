@@ -133,4 +133,8 @@ class View
     {
         $this->sectionStop();
     }
+    public function data(): array
+    {
+        return $this->data;
+    }
 }

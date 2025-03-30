@@ -39,7 +39,7 @@ class View
      * @param  string $template the master template
      * @param  array  $data     optional data to pass to the template
      */
-    protected function layout(string $template, array $data = []): void
+    public function layout(string $template, array $data = []): void
     {
         $this->layout = $template;
         $this->layoutData = $data;
@@ -49,7 +49,7 @@ class View
      * @param  string  $name the section name
      * @return string        the section content
      */
-    protected function section($name = '')
+    public function section($name = '')
     {
         return $this->sectionData[$name] ?? '';
     }
@@ -57,7 +57,7 @@ class View
      * Start a new section, so that it will be available in the master template. Should be used only inside templates.
      * @param  string       $name the section name
      */
-    protected function sectionStart(string $name): void
+    public function sectionStart(string $name): void
     {
         ob_start();
         $this->layoutSection = $name;
@@ -65,7 +65,7 @@ class View
     /**
      * Stop and gather the content for the currently started section. Should be used only inside templates.
      */
-    protected function sectionStop(): void
+    public function sectionStop(): void
     {
         $this->layoutSections[$this->layoutSection] = ob_get_clean();
     }
@@ -75,7 +75,7 @@ class View
      * @param  callable|string $funcs a pipe delimited list of functions to execute on the value (or a single callable)
      * @return string        the escaped string
      */
-    protected function e(string $var, callable|string $funcs = ''): string
+    public function e(string $var, callable|string $funcs = ''): string
     {
         if (is_callable($funcs)) {
             $var = call_user_func($funcs, $var);
@@ -93,7 +93,7 @@ class View
      * @param  array   $data     optional data to pass in
      * @return string            the result
      */
-    protected function insert(string $template, array $data = []): string
+    public function insert(string $template, array $data = []): string
     {
         return $this->repository->render($template, $data);
     }
@@ -125,11 +125,11 @@ class View
     {
         return $this->render($data);
     }
-    protected function start(string $name): void
+    public function start(string $name): void
     {
         $this->sectionStart($name);
     }
-    protected function stop(): void
+    public function stop(): void
     {
         $this->sectionStop();
     }

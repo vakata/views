@@ -112,6 +112,7 @@ class View
             $data = ob_get_clean();
             if ($this->layout) {
                 $this->layoutSections[''] = $data;
+                $this->layoutSections['content'] = $data;
                 return $this->repository->render($this->layout, $this->layoutData, $this->layoutSections);
             }
             return $data;

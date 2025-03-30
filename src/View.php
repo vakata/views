@@ -124,4 +124,12 @@ class View
     {
         return $this->render($data);
     }
+    protected function start(string $name): void
+    {
+        $this->sectionStart($name);
+    }
+    protected function stop(): void
+    {
+        $this->sectionStop();
+    }
 }

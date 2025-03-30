@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vakata\views;
 
 /**
@@ -7,15 +9,15 @@ namespace vakata\views;
  */
 class View
 {
-    protected $repository;
-    protected $template;
-    protected $sectionData;
-    protected $data = [];
+    protected Views $repository;
+    protected string $template;
+    protected array $data = [];
+    protected array $sectionData = [];
 
-    protected $layout;
-    protected $layoutSection;
-    protected $layoutData = [];
-    protected $layoutSections = [];
+    protected ?string $layout = null;
+    protected ?string $layoutSection = null;
+    protected array $layoutSections = [];
+    protected array $layoutData = [];
 
     /**
      * Create an instance.
@@ -24,12 +26,12 @@ class View
      * @param  array       $sectionData optional available sections
      * @param  array       $data        optional data to use when rendering
      */
-    public function __construct(Views $repository, string $template, array $sectionData = [], array $data = [])
+    public function __construct(Views $repository, string $template, array $sectionData = [], array &$data = [])
     {
         $this->repository = $repository;
         $this->template = $template;
         $this->sectionData = $sectionData;
-        $this->data = $data;
+        $this->data = &$data;
     }
 
     /**
@@ -37,7 +39,7 @@ class View
      * @param  string $template the master template
      * @param  array  $data     optional data to pass to the template
      */
-    protected function layout($template, array $data = [])
+    protected function layout(string $template, array $data = []): void
     {
         $this->layout = $template;
         $this->layoutData = $data;
@@ -49,13 +51,13 @@ class View
      */
     protected function section($name = '')
     {
-        return isset($this->sectionData[$name]) ? $this->sectionData[$name] : '';
+        return $this->sectionData[$name] ?? '';
     }
     /**
      * Start a new section, so that it will be available in the master template. Should be used only inside templates.
      * @param  string       $name the section name
      */
-    protected function sectionStart($name)
+    protected function sectionStart(string $name): void
     {
         ob_start();
         $this->layoutSection = $name;
@@ -63,7 +65,7 @@ class View
     /**
      * Stop and gather the content for the currently started section. Should be used only inside templates.
      */
-    protected function sectionStop()
+    protected function sectionStop(): void
     {
         $this->layoutSections[$this->layoutSection] = ob_get_clean();
     }
@@ -73,7 +75,7 @@ class View
      * @param  callable|string $funcs a pipe delimited list of functions to execute on the value (or a single callable)
      * @return string        the escaped string
      */
-    protected function e($var, $funcs = '')
+    protected function e(string $var, callable|string $funcs = ''): string
     {
         if (is_callable($funcs)) {
             $var = call_user_func($funcs, $var);
@@ -91,7 +93,7 @@ class View
      * @param  array   $data     optional data to pass in
      * @return string            the result
      */
-    protected function insert($template, array $data = [])
+    protected function insert(string $template, array $data = []): string
     {
         return $this->repository->render($template, $data);
     }
@@ -100,7 +102,7 @@ class View
      * @param  array  $data optional data to use when rendering
      * @return string       the result
      */
-    public function render(array $data = [])
+    public function render(array $data = []): string
     {
         extract($this->data);
         extract($data);

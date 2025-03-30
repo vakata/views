@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vakata\views;
 
 /**
@@ -7,18 +9,24 @@ namespace vakata\views;
  */
 class Views
 {
-    protected $dirs = [];
-    protected $data = [];
+    /** @var array<string,string> $dirs */
+    protected array $dirs = [];
+    /** @var array<string,mixed> $data */
+    protected array $data = [];
 
     /**
      * Create an instance
-     * @param  string|null $dir  optional default dir for views
-     * @param  array       $data optional preshared data
+     * @param  string|null         $dir  optional default dir for views
+     * @param  array<string,mixed> $data optional preshared data
      */
-    public function __construct(string $dir = null, array $data = [])
+    public function __construct(?string $dir = null, array $data = [])
     {
-        $this->dir($dir);
-        $this->share($data);
+        if ($dir) {
+            $this->dir($dir);
+        }
+        if (count($data)) {
+            $this->share($data);
+        }
     }
 
     /**
@@ -27,7 +35,7 @@ class Views
      * @param string $name the alias of the directory
      * @return self
      */
-    public function dir($dir, $name = '')
+    public function dir(string $dir, string $name = ''): self
     {
         $this->dirs[$name] = $dir;
         return $this;
@@ -38,7 +46,7 @@ class Views
      * @param mixed        $value if $var is an array omit this parameter, otherwise this is the value of the variable
      * @return self
      */
-    public function share($var, $value = null)
+    public function share(array|string $var, mixed $value = null): self
     {
         if (is_array($var) && $value === null) {
             $this->data = array_merge($this->data, $var);
@@ -47,11 +55,26 @@ class Views
         }
         return $this;
     }
+    public function exists(string $template): bool
+    {
+        $template = explode('::', $template, 2);
+        if (!isset($template[1])) {
+            array_unshift($template, '');
+        }
+        list($dir, $name) = $template;
+        if (!isset($this->dirs[$dir])) {
+            return false;
+        }
+        $template = $this->dirs[$dir] . DIRECTORY_SEPARATOR . preg_replace('(\.php$)', '', $name) . '.php';
+        if (!is_file($template)) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Get a View instance.
      * @param  string $template the template to render
-     * @param  array  $sections optional sections to use in rendering
-     * @return \vakata\views\View the view instance
+     * @return View the view instance
      */
     public function get($template, array $sections = [])
     {
@@ -78,6 +101,29 @@ class Views
      */
     public function render($template, array $data = [], array $sections = [])
     {
-        return $this->get($template, $sections, $this->data)->render($data);
+        return $this->get($template, $sections)->render($data);
+    }
+
+    public function getFolders(): object
+    {
+        return new class ($this->dirs) {
+            public function __construct(protected array $dirs)
+            {
+            }
+            public function exists(string $dir): bool
+            {
+                return in_array($dir, $this->dirs);
+            }
+        };
+    }
+    public function addFolder(string $name, string $location): self
+    {
+        $this->dir($location, $name);
+        return $this;
+    }
+    public function addData(array $data): self
+    {
+        $this->share($data);
+        return $this;
     }
 }

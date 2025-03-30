@@ -12,6 +12,7 @@ class View
     protected Views $repository;
     protected string $template;
     protected array $data = [];
+    protected array $last = [];
     protected array $sectionData = [];
 
     protected ?string $layout = null;
@@ -104,6 +105,7 @@ class View
      */
     public function render(array $data = []): string
     {
+        $this->last = $data;
         extract($this->data);
         extract($data);
         try {
@@ -135,6 +137,6 @@ class View
     }
     public function data(): array
     {
-        return $this->data;
+        return array_merge($this->data, $this->last);
     }
 }
